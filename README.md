@@ -9,6 +9,7 @@ Este proyecto es una aplicación PHP que cumple con la siguiente prueba técnica
 ## Requisitos
 
 - Docker y Docker Compose instalados.
+- Docker Desktop debe estar abierto antes de ejecutar cualquier comando.
 - Git (opcional, para clonar el repositorio).
 
 ## Instrucciones de Ejecución
@@ -23,8 +24,8 @@ cd <nombre_del_proyecto>
 
 Se incluye un Makefile para facilitar la inicialización del entorno. Desde la raíz del proyecto, ejecuta:
 ```bash
-make build
-make up
+docker-compose build
+docker-compose up -d
 ```
 Esto levantará:
 - **php:** Un contenedor PHP (basado en PHP 8.1 CLI) con Doctrine y Composer instalados. Se ejecuta el servidor embebido en el puerto **8000**.
