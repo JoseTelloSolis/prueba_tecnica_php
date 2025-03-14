@@ -22,7 +22,7 @@ cd <nombre_del_proyecto>
 
 ### 2. Construir y Levantar los Contenedores Docker
 
-Se incluye un Makefile para facilitar la inicialización del entorno. Desde la raíz del proyecto, ejecuta:
+Desde la raíz del proyecto, ejecuta:
 ```bash
 docker-compose build
 docker-compose up -d
@@ -61,24 +61,68 @@ Esto correrá todas las pruebas unitarias e integración ubicadas en el director
 
 Para detener los contenedores, ejecuta:
 ```bash
-make down
+docker-compose down
 ```
 
 ## Notas de Configuración
 
-- **MySQL:**  
-  En este proyecto, MySQL se configura para usarse en el puerto **3307** del host. Esta configuración se define de forma consistente en los siguientes archivos:
-  - **config/doctrine.php:** Se establece el parámetro `'port' => 3307` en la conexión a la base de datos.
-  - **bin/doctrine:** También se utiliza el puerto 3307 para la conexión (definido en el array de parámetros de conexión).
-  - **docker-compose.yml:** El contenedor MySQL escucha en el puerto 3306 internamente, pero se mapea al puerto **3307** en el host para evitar conflictos con instalaciones locales.
-  
-  Si en tu entorno utilizas MySQL en el puerto por defecto (3306), deberás ajustar estos archivos en consecuencia.
+### Configuración de la Base de Datos
 
-- **Arquitectura y Diseño:**  
-  El proyecto está estructurado siguiendo principios de DDD y Clean Architecture. Se utilizan Value Objects para encapsular datos sensibles y se implementan repositorios mediante interfaces. La lógica de negocio (por ejemplo, el registro de usuario) se encuentra desacoplada en casos de uso y controladores.
+Para asegurar que la conexión a MySQL funcione correctamente, verifica que los siguientes archivos tengan los valores adecuados según tu entorno:
 
-- **Pruebas Automatizadas:**  
-  Se han implementado pruebas unitarias e integración usando PHPUnit para validar la funcionalidad de las entidades, Value Objects, casos de uso y la integración de Doctrine con MySQL.
+1. **config/doctrine.php**:
+   - Modificar el puerto, nombre de la base de datos, usuario y contraseña en la configuración de la conexión.
+   ```php
+   return [
+       'dbname' => 'nombre_base_datos',
+       'user' => 'usuario_mysql',
+       'password' => 'password_mysql',
+       'host' => 'mysql_db',
+       'driver' => 'pdo_mysql',
+       'port' => 3307,
+   ];
+   ```
+
+2. **bin/doctrine**:
+   - Asegurar que los valores coincidan con `config/doctrine.php`.
+
+3. **docker-compose.yml**:
+   - Revisar y modificar la configuración de MySQL según sea necesario.
+   ```yaml
+   services:
+     mysql:
+       image: mysql:8.0
+       environment:
+         MYSQL_DATABASE: nombre_base_datos
+         MYSQL_USER: usuario_mysql
+         MYSQL_PASSWORD: password_mysql
+         MYSQL_ROOT_PASSWORD: root_password
+       ports:
+         - "3307:3306"
+   ```
+
+### Verificación del Estado de los Contenedores
+
+Para verificar que los contenedores están corriendo correctamente, usa:
+```bash
+docker ps
+```
+
+Si hay errores, revisa los logs con:
+```bash
+docker logs php_app
+docker logs mysql_db
+```
+
+Si necesitas acceder a MySQL dentro del contenedor, ejecuta:
+```bash
+docker exec -it mysql_db mysql -u root -p
+```
+
+Para ejecutar las migraciones de la base de datos, usa:
+```bash
+docker exec -it php_app php bin/doctrine migrations:migrate
+```
 
 ## Estructura del Proyecto
 
@@ -87,7 +131,6 @@ make down
 - **config/**: Configuración de Doctrine (por ejemplo, `doctrine.php`).
 - **docker/**: Dockerfile para el servicio PHP.
 - **docker-compose.yml**: Configuración de Docker Compose para los servicios PHP y MySQL.
-- **Makefile**: Comandos para construir, levantar y detener el entorno Docker.
 - **README.md**: Este archivo, que explica cómo ejecutar el proyecto.
 
 ## Entrega
