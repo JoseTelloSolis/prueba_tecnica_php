@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  php:
+    build: ./docker/php
+    container_name: php_app
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: prueba_tecnica
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"  # El contenedor MySQL escucha en el puerto 3306 y se mapea a 3307 en el host
+
+volumes:
+  mysql_data:

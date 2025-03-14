@@ -1,0 +1,45 @@
+#!/usr/bin/env php
+<?php
+
+use Doctrine\ORM\ORMSetup;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$paths = [__DIR__ . '/../src/Domain'];
+$isDevMode = true;
+
+// Configuración usando mapeo por atributos (si tus entidades usan atributos)
+// Si usas anotaciones, debes usar Setup::createAnnotationMetadataConfiguration()
+$config = ORMSetup::createAttributeMetadataConfiguration($paths, $isDevMode);
+
+$dbParams = [
+    'dbname'   => 'prueba_tecnica',
+    'user'     => 'root',
+    'password' => '',
+    'host'     => 'localhost',
+    'port'     => 3307,
+    'driver'   => 'pdo_mysql',
+];
+
+$connection = DriverManager::getConnection($dbParams, $config);
+$entityManager = new EntityManager($connection, $config);
+
+// Implementación del proveedor para EntityManager que cumpla con la interfaz
+$provider = new class($entityManager) implements EntityManagerProvider {
+    private $entityManager;
+    public function __construct($entityManager) {
+        $this->entityManager = $entityManager;
+    }
+    public function getDefaultManager(): \Doctrine\ORM\EntityManagerInterface {
+        return $this->entityManager;
+    }
+    public function getManager(?string $name = null): \Doctrine\ORM\EntityManagerInterface {
+        return $this->entityManager;
+    }
+};
+
+ConsoleRunner::run($provider);
