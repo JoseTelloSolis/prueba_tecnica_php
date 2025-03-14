@@ -2,11 +2,14 @@ version: "3.8"
 
 services:
   php:
-    build: ./docker/php
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
     container_name: php_app
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html
+    command: php -S 0.0.0.0:8000 -t public
     ports:
       - "8000:8000"
     depends_on:
@@ -23,7 +26,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3307:3306"  # El contenedor MySQL escucha en el puerto 3306 y se mapea a 3307 en el host
+      - "3307:3306"
 
 volumes:
   mysql_data:
