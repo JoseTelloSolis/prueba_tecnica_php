@@ -66,16 +66,18 @@ make down
 ## Notas de Configuración
 
 - **MySQL:**  
-  En este proyecto, MySQL se configura para usarse en el puerto **3307** del host (el contenedor MySQL usa el puerto 3306 internamente).  
-  Si en tu entorno utilizas MySQL en el puerto por defecto (3306), deberás ajustar los parámetros de conexión en `config/doctrine.php` y en `docker-compose.yml`.
+  En este proyecto, MySQL se configura para usarse en el puerto **3307** del host. Esta configuración se define de forma consistente en los siguientes archivos:
+  - **config/doctrine.php:** Se establece el parámetro `'port' => 3307` en la conexión a la base de datos.
+  - **bin/doctrine:** También se utiliza el puerto 3307 para la conexión (definido en el array de parámetros de conexión).
+  - **docker-compose.yml:** El contenedor MySQL escucha en el puerto 3306 internamente, pero se mapea al puerto **3307** en el host para evitar conflictos con instalaciones locales.
+  
+  Si en tu entorno utilizas MySQL en el puerto por defecto (3306), deberás ajustar estos archivos en consecuencia.
 
 - **Arquitectura y Diseño:**  
-  El proyecto está estructurado siguiendo principios de DDD y Clean Architecture.  
-  Se utilizan Value Objects para encapsular datos sensibles y se implementan repositorios mediante interfaces.  
-  La lógica de negocio (por ejemplo, el registro de usuario) se encuentra desacoplada en casos de uso y controladores.
+  El proyecto está estructurado siguiendo principios de DDD y Clean Architecture. Se utilizan Value Objects para encapsular datos sensibles y se implementan repositorios mediante interfaces. La lógica de negocio (por ejemplo, el registro de usuario) se encuentra desacoplada en casos de uso y controladores.
 
 - **Pruebas Automatizadas:**  
-  Se han implementado pruebas unitarias e integración usando PHPUnit para validar la funcionalidad de entidades, Value Objects, casos de uso y la integración de Doctrine con MySQL.
+  Se han implementado pruebas unitarias e integración usando PHPUnit para validar la funcionalidad de las entidades, Value Objects, casos de uso y la integración de Doctrine con MySQL.
 
 ## Estructura del Proyecto
 
