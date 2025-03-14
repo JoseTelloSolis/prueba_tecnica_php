@@ -21,22 +21,20 @@ cd <nombre_del_proyecto>
 ```
 
 ### 2. Construir y Levantar los Contenedores Docker
-```
 ```bash
 docker-compose build
 docker-compose up -d
 ```
-```
+
 Esto levantará:
 - **php:** Un contenedor PHP (basado en PHP 8.1 CLI) con Doctrine y Composer instalados. Se ejecuta el servidor embebido en el puerto **8000**.
 - **mysql:** Un contenedor MySQL 8.0. El contenedor escucha en el puerto 3306 internamente, pero se mapea al puerto **3307** en el host para evitar conflictos con instalaciones locales.
 
 ### 3. Crear la Base de Datos y Esquema
-```
 ```bash
 docker exec -it php_app php bin/doctrine orm:schema-tool:update --force
 ```
-```
+
 Esto creará las tablas necesarias en la base de datos según las entidades definidas en el código.
 
 ### 4. Acceder a la Aplicación
@@ -45,13 +43,10 @@ Esto creará las tablas necesarias en la base de datos según las entidades defi
   [http://localhost:8000](http://localhost:8000)
   
 - Para probar el endpoint de registro, envía una petición **POST** a:
-```
-```
+```text
 http://localhost:8000/register
 ```
-```
 con el siguiente JSON en el body:
-```
 ```json
 {
     "name": "Juan Pérez",
@@ -59,38 +54,29 @@ con el siguiente JSON en el body:
     "password": "StrongPass@123"
 }
 ```
-```
 
 ### 5. Ejecutar las Pruebas Automatizadas
 
 #### 5.1 Acceder al Contenedor PHP  
 Antes de ejecutar las pruebas, es necesario acceder al contenedor `php_app`:
-```
 ```bash
 docker exec -it php_app bash
-```
 ```
 
 #### 5.2 Ejecutar PHPUnit  
 Una vez dentro del contenedor, ejecutar los tests con:
-```
 ```bash
 vendor/bin/phpunit --testdox tests
 ```
-```
 
 Si necesitas salir del contenedor, usa:
-```
 ```bash
 exit
 ```
-```
 
 ### 6. Detener el Entorno Docker
-```
 ```bash
 docker-compose down
-```
 ```
 
 ## Notas de Configuración
@@ -100,7 +86,6 @@ docker-compose down
 Para asegurar que la conexión a MySQL funcione correctamente, verifica que los siguientes archivos tengan los valores adecuados según tu entorno:
 
 1. **config/doctrine.php**:
-```
 ```php
 return [
     'dbname' => 'nombre_base_datos',
@@ -111,13 +96,11 @@ return [
     'port' => 3307,
 ];
 ```
-```
 
 2. **bin/doctrine**:
    - Asegurar que los valores coincidan con `config/doctrine.php`.
 
 3. **docker-compose.yml**:
-```
 ```yaml
 services:
   mysql:
@@ -130,30 +113,23 @@ services:
     ports:
       - "3307:3306"
 ```
-```
 
 ### Verificación del Estado de los Contenedores
 
 Para verificar que los contenedores están corriendo correctamente, usa:
-```
 ```bash
 docker ps
 ```
-```
 
 Si hay errores, revisa los logs con:
-```
 ```bash
 docker logs php_app
 docker logs mysql_db
 ```
-```
 
 Si necesitas acceder a MySQL dentro del contenedor, ejecuta:
-```
 ```bash
 docker exec -it mysql_db mysql -u root -p
-```
 ```
 
 ## Estructura del Proyecto
@@ -170,3 +146,4 @@ docker exec -it mysql_db mysql -u root -p
 1. Sube tu código a un repositorio público en GitHub.
 2. Incluye este archivo README.md con las instrucciones de ejecución.
 3. Comparte el enlace del repositorio con los evaluadores.
+
