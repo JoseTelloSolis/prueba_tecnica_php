@@ -31,7 +31,15 @@ Esto levantará:
 - **php:** Un contenedor PHP (basado en PHP 8.1 CLI) con Doctrine y Composer instalados. Se ejecuta el servidor embebido en el puerto **8000**.
 - **mysql:** Un contenedor MySQL 8.0. El contenedor escucha en el puerto 3306 internamente, pero se mapea al puerto **3307** en el host para evitar conflictos con instalaciones locales.
 
-### 3. Acceder a la Aplicación
+### 3. Crear la Base de Datos y Esquema
+
+Una vez que los contenedores están corriendo, ejecuta:
+```bash
+docker exec -it php_app php bin/doctrine orm:schema-tool:update --force
+```
+Esto creará las tablas necesarias en la base de datos según las entidades definidas en el código.
+
+### 4. Acceder a la Aplicación
 
 - Abre tu navegador y navega a:  
   [http://localhost:8000](http://localhost:8000)
@@ -49,21 +57,13 @@ con el siguiente JSON en el body:
 }
 ```
 
-### 4. Ejecutar las Pruebas Automatizadas
+### 5. Ejecutar las Pruebas Automatizadas
 
 Desde la raíz del proyecto, ejecuta:
 ```bash
 vendor/bin/phpunit --testdox tests
 ```
 Esto correrá todas las pruebas unitarias e integración ubicadas en el directorio `tests`.
-
-### 5. Crear la Base de Datos con Doctrine
-
-Ejecuta el siguiente comando para generar las tablas en la base de datos:
-```bash
-php bin/doctrine orm:schema-tool:update --force
-```
-Este comando sincroniza la base de datos con las entidades definidas en el código.
 
 ### 6. Detener el Entorno Docker
 
