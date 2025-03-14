@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libxml2-dev \
     libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+    default-mysql-client \
+    && docker-php-ext-install pdo pdo_mysql mysqli zip
 
 # Instalar Composer globalmente
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

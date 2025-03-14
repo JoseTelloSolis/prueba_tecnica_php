@@ -31,11 +31,11 @@ final class DoctrineUserRepositoryTest extends TestCase
 
         $dbParams = [
             'driver'   => 'pdo_mysql',
-            'host'     => '127.0.0.1',
-            'port'     => 3307,
+            'host'     => 'mysql_db',
+            'port'     => 3306,
             'dbname'   => 'prueba_tecnica',
             'user'     => 'root',
-            'password' => '',
+            'password' => 'root',
         ];
 
         $connection = DriverManager::getConnection($dbParams, $config);

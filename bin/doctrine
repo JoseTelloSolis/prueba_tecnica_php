@@ -20,7 +20,7 @@ $dbParams = [
     'dbname'   => 'prueba_tecnica',
     'user'     => 'root',
     'password' => 'root',
-    'host'     => 'localhost',
+    'host'     => 'mysql_db',
     'port'     => 3307,
     'driver'   => 'pdo_mysql',
 ];
