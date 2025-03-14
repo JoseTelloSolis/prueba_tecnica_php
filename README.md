@@ -11,6 +11,7 @@ Este proyecto es una aplicación PHP que cumple con la siguiente prueba técnica
 - Docker y Docker Compose instalados.
 - Docker Desktop debe estar abierto antes de ejecutar cualquier comando.
 - Git (opcional, para clonar el repositorio).
+- Composer instalado globalmente.
 
 ## Instrucciones de Ejecución
 
@@ -31,7 +32,46 @@ Esto levantará:
 - **php:** Un contenedor PHP (basado en PHP 8.1 CLI) con Doctrine y Composer instalados. Se ejecuta el servidor embebido en el puerto **8000**.
 - **mysql:** Un contenedor MySQL 8.0. El contenedor escucha en el puerto 3306 internamente, pero se mapea al puerto **3307** en el host para evitar conflictos con instalaciones locales.
 
-### 3. Acceder a la Aplicación
+### 3. Instalar Dependencias
+
+Dentro del contenedor PHP, instala las dependencias de Composer:
+```bash
+docker exec -it php_app composer install
+```
+
+### 4. Configurar la Base de Datos
+
+Ejecuta el siguiente comando para crear las tablas en la base de datos:
+```bash
+docker exec -it php_app php bin/doctrine orm:schema-tool:create
+```
+
+Si en el futuro necesitas actualizar la estructura de la base de datos, usa:
+```bash
+docker exec -it php_app php bin/doctrine orm:schema-tool:update --force
+```
+
+### 5. Verificar Comandos de Doctrine
+
+Para asegurarte de que Doctrine está instalado correctamente, ejecuta:
+```bash
+docker exec -it php_app php bin/doctrine list
+```
+Esto debería mostrar los comandos disponibles, incluyendo los relacionados con `orm` y `migrations`.
+
+### 6. Ejecutar Migraciones
+
+Si deseas gestionar la base de datos con migraciones, primero instala `doctrine/migrations`:
+```bash
+docker exec -it php_app composer require doctrine/migrations
+```
+Luego, genera y ejecuta las migraciones:
+```bash
+docker exec -it php_app php bin/doctrine migrations:diff
+docker exec -it php_app php bin/doctrine migrations:migrate
+```
+
+### 7. Acceder a la Aplicación
 
 - Abre tu navegador y navega a:  
   [http://localhost:8000](http://localhost:8000)
@@ -49,15 +89,15 @@ con el siguiente JSON en el body:
 }
 ```
 
-### 4. Ejecutar las Pruebas Automatizadas
+### 8. Ejecutar las Pruebas Automatizadas
 
 Desde la raíz del proyecto, ejecuta:
 ```bash
-vendor/bin/phpunit --testdox tests
+docker exec -it php_app vendor/bin/phpunit --testdox tests
 ```
 Esto correrá todas las pruebas unitarias e integración ubicadas en el directorio `tests`.
 
-### 5. Detener el Entorno Docker
+### 9. Detener el Entorno Docker
 
 Para detener los contenedores, ejecuta:
 ```bash
@@ -117,11 +157,6 @@ docker logs mysql_db
 Si necesitas acceder a MySQL dentro del contenedor, ejecuta:
 ```bash
 docker exec -it mysql_db mysql -u root -p
-```
-
-Para ejecutar las migraciones de la base de datos, usa:
-```bash
-docker exec -it php_app php bin/doctrine migrations:migrate
 ```
 
 ## Estructura del Proyecto
